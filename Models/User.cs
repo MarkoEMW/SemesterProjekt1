@@ -1,10 +1,5 @@
 ﻿using System.Net.NetworkInformation;
 using System.Text.Json.Serialization;
-<<<<<<< HEAD
-using System.Xml.Linq;
-=======
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SemesterProjekt1
 {
@@ -22,11 +17,8 @@ namespace SemesterProjekt1
 
         private string _image;
 
-<<<<<<< HEAD
         private string _name;
 
-=======
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
         public int Id
         {
             get { return _id; }
@@ -63,17 +55,12 @@ namespace SemesterProjekt1
             set { _image = value; }
         }
 
-<<<<<<< HEAD
         public string Name
         {
             get { return _name; }
             set { _name = value; }
         }
 
-
-
-=======
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
         ~User()
         {
             Console.WriteLine($"User {_username}, {_password} wird zerstört.");
@@ -87,18 +74,11 @@ namespace SemesterProjekt1
             this._Inventory = new Inventory(this._id);
             this._image = string.Empty;
             this._bio = string.Empty;
-<<<<<<< HEAD
             this._name = string.Empty;
         }
 
         [JsonConstructor]
         public User(int id, string username, string password, Inventory inventory, string bio, string image, string name)
-=======
-        }
-
-        [JsonConstructor]
-        public User(int id, string username, string password, Inventory inventory, string bio, string image)
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
         {
             this._id = id;
             this._username = username;
@@ -106,11 +86,7 @@ namespace SemesterProjekt1
             this._Inventory = inventory ?? new Inventory(this._id);
             this._image = image ?? string.Empty;
             this._bio = bio ?? string.Empty;
-<<<<<<< HEAD
             this._name = name ?? string.Empty;
-
-=======
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
         }
 
         public void GetNextAvailableId(List<User> userlist)

@@ -589,15 +589,9 @@ namespace SemesterProjekt1
                             string password = reader.GetString(2);
                             string bio = reader.GetString(3);
                             string image = reader.GetString(4);
-<<<<<<< HEAD
                             string name = reader.GetString(5);
                             var inventory = LoadInventory(id);
                             users.Add(new User(id, username, password, inventory, bio, image, name));
-=======
-
-                            var inventory = LoadInventory(id);
-                            users.Add(new User(id, username, password, inventory, bio, image));
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
                         }
                     }
                 }
@@ -618,15 +612,10 @@ namespace SemesterProjekt1
                             string password = reader.GetString(2);
                             string bio = reader.GetString(3);
                             string image = reader.GetString(4);
-<<<<<<< HEAD
+
                             string name = reader.GetString(5);
                             var inventory = LoadInventory(id);
                             users.Add(new User(id, username, password, inventory, bio, image, name));
-=======
-
-                            var inventory = LoadInventory(id);
-                            users.Add(new User(id, username, password, inventory, bio, image));
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
                         }
                     }
                 }
@@ -649,22 +638,15 @@ namespace SemesterProjekt1
 <<<<<<< HEAD
                                     INSERT INTO Users (Id, Username, Password, Money, Elo, Bio, Image, Name)
                                     VALUES (@Id, @Username, @Password, @Money, @Elo, @Bio, @Image, @Name)
-=======
-                                    INSERT INTO Users (Id, Username, Password, Money, Elo, Bio, Image)
-                                    VALUES (@Id, @Username, @Password, @Money, @Elo, @Bio, @Image)
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
                                     ON CONFLICT (Id) DO UPDATE
                                     SET Username = EXCLUDED.Username,
                                         Password = EXCLUDED.Password,
                                         Money = EXCLUDED.Money,
                                         Elo = EXCLUDED.Elo,
                                         Bio = EXCLUDED.Bio,
-<<<<<<< HEAD
+
                                         Image = EXCLUDED.Image,
                                         Name = EXCLUDED.Name;";
-=======
-                                        Image = EXCLUDED.Image;";
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
                             using (var command = new NpgsqlCommand(insertOrUpdateUser, connection, transaction))
                             {
                                 command.Parameters.AddWithValue("@Id", user.Id);
@@ -704,10 +686,7 @@ namespace SemesterProjekt1
                                 command.Parameters.AddWithValue("@Elo", user.Inventory.ELO);
                                 command.Parameters.AddWithValue("@Bio", user.Bio ?? string.Empty);
                                 command.Parameters.AddWithValue("@Image", user.Image ?? string.Empty);
-<<<<<<< HEAD
                                 command.Parameters.AddWithValue("@Name", user.Name ?? string.Empty);
-=======
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
                                 command.ExecuteNonQuery();
                             }
 
@@ -729,25 +708,20 @@ namespace SemesterProjekt1
                     using (var transaction = connection.BeginTransaction())
                     {
                         string insertOrUpdateUser = @"
-<<<<<<< HEAD
                                 INSERT INTO Users (Id, Username, Password, Money, Elo, Bio, Image, Name)
                                 VALUES (@Id, @Username, @Password, @Money, @Elo, @Bio, @Image, @Name)
-=======
                                 INSERT INTO Users (Id, Username, Password, Money, Elo, Bio, Image)
                                 VALUES (@Id, @Username, @Password, @Money, @Elo, @Bio, @Image)
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
                                 ON CONFLICT (Id) DO UPDATE
                                 SET Username = EXCLUDED.Username,
                                     Password = EXCLUDED.Password,
                                     Money = EXCLUDED.Money,
                                     Elo = EXCLUDED.Elo,
                                     Bio = EXCLUDED.Bio,
-<<<<<<< HEAD
+
                                     Image = EXCLUDED.Image,
                                     Name = EXCLUDED.Name;";
-=======
-                                    Image = EXCLUDED.Image;";
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
+
                         using (var command = new NpgsqlCommand(insertOrUpdateUser, connection, transaction))
                         {
                             command.Parameters.AddWithValue("@Id", user.Id);
@@ -757,10 +731,7 @@ namespace SemesterProjekt1
                             command.Parameters.AddWithValue("@Elo", user.Inventory.ELO);
                             command.Parameters.AddWithValue("@Bio", user.Bio ?? string.Empty);
                             command.Parameters.AddWithValue("@Image", user.Image ?? string.Empty);
-<<<<<<< HEAD
                             command.Parameters.AddWithValue("@Name", user.Name ?? string.Empty);
-=======
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
                             command.ExecuteNonQuery();
                         }
 
@@ -777,13 +748,8 @@ namespace SemesterProjekt1
                     using (var transaction = connection.BeginTransaction())
                     {
                         string insertOrUpdateUser = @"
-<<<<<<< HEAD
                                 INSERT OR REPLACE INTO Users (Id, Username, Password, Money, Elo, Bio, Image, Name)
                                 VALUES (@Id, @Username, @Password, @Money, @Elo, @Bio, @Image, @Name);";
-=======
-                                INSERT OR REPLACE INTO Users (Id, Username, Password, Money, Elo, Bio, Image)
-                                VALUES (@Id, @Username, @Password, @Money, @Elo, @Bio, @Image);";
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
                         using (var command = new SqliteCommand(insertOrUpdateUser, connection, transaction))
                         {
                             command.Parameters.AddWithValue("@Id", user.Id);
@@ -793,10 +759,7 @@ namespace SemesterProjekt1
                             command.Parameters.AddWithValue("@Elo", user.Inventory.ELO);
                             command.Parameters.AddWithValue("@Bio", user.Bio);
                             command.Parameters.AddWithValue("@Image", user.Image);
-<<<<<<< HEAD
                             command.Parameters.AddWithValue("@Name", user.Name ?? string.Empty);
-=======
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
                             command.ExecuteNonQuery();
                         }
 
@@ -827,14 +790,9 @@ namespace SemesterProjekt1
                                 string password = reader.GetString(2);
                                 string bio = reader.GetString(5);
                                 string image = reader.GetString(6);
-<<<<<<< HEAD
                                 string Name = reader.GetString(7);
                                 var inventory = LoadInventory(userId);
                                 user = new User(userId, username, password, inventory, bio, image, Name);
-=======
-                                var inventory = LoadInventory(userId);
-                                user = new User(userId, username, password, inventory, bio, image);
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
                             }
                         }
                     }
@@ -857,14 +815,9 @@ namespace SemesterProjekt1
                                 string password = reader.GetString(2);
                                 string bio = reader.GetString(5);
                                 string image = reader.GetString(6);
-<<<<<<< HEAD
                                 string Name = reader.GetString(7);
                                 var inventory = LoadInventory(userId);
                                 user = new User(userId, username, password, inventory, bio, image, Name);
-=======
-                                var inventory = LoadInventory(userId);
-                                user = new User(userId, username, password, inventory, bio, image);
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
                             }
                         }
                     }
