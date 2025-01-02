@@ -79,17 +79,16 @@ namespace SemesterProjekt1
         private void InitializePostgresDatabase(NpgsqlConnection connection)
         {
             string createUsersTable = @"
-                    CREATE TABLE IF NOT EXISTS Users (
-                        Id SERIAL PRIMARY KEY,
-                        Username TEXT NOT NULL,
-                        Password TEXT NOT NULL,
-                        Money INTEGER,
-                        ELO INTEGER,
-                        Bio TEXT,
-                        Image TEXT,
-                        Name TEXT
-
-                    );";
+                CREATE TABLE IF NOT EXISTS Users (
+                    Id SERIAL PRIMARY KEY,
+                    Username TEXT NOT NULL,
+                    Password TEXT NOT NULL,
+                    Money INTEGER,
+                    ELO INTEGER,
+                    Bio TEXT,
+                    Image TEXT,
+                    Name TEXT
+                );";
             using (var command = new NpgsqlCommand(createUsersTable, connection))
             {
                 command.ExecuteNonQuery();
@@ -114,28 +113,28 @@ namespace SemesterProjekt1
             }
 
             string createCardPacksTable = @"
-                    CREATE TABLE IF NOT EXISTS CardPacks (
-                        Id SERIAL PRIMARY KEY,
-                        UserID INTEGER NOT NULL,
-                        Rarity INTEGER NOT NULL,
-                        FOREIGN KEY(UserID) REFERENCES Users(Id),
-                        Cards JSONB
-                    );";
+                CREATE TABLE IF NOT EXISTS CardPacks (
+                    Id SERIAL PRIMARY KEY,
+                    UserID INTEGER NOT NULL,
+                    Rarity INTEGER NOT NULL,
+                    FOREIGN KEY(UserID) REFERENCES Users(Id),
+                    Cards JSONB
+                );";
             using (var command = new NpgsqlCommand(createCardPacksTable, connection))
             {
                 command.ExecuteNonQuery();
             }
 
             string createTradesTable = @"
-        CREATE TABLE IF NOT EXISTS Trades (
-            Id UUID PRIMARY KEY,
-            CardToTrade BIGINT NOT NULL,
-            Type INTEGER NOT NULL,
-            MinimumDamage INTEGER NOT NULL,
-            UserId INTEGER NOT NULL,
-            FOREIGN KEY(UserId) REFERENCES Users(Id),
-            FOREIGN KEY(CardToTrade) REFERENCES Cards(Id)
-        );";
+                CREATE TABLE IF NOT EXISTS Trades (
+                    Id UUID PRIMARY KEY,
+                    CardToTrade UUID NOT NULL,
+                    Type INTEGER NOT NULL,
+                    MinimumDamage INTEGER NOT NULL,
+                    UserId INTEGER NOT NULL,
+                    FOREIGN KEY(UserId) REFERENCES Users(Id),
+                    FOREIGN KEY(CardToTrade) REFERENCES Cards(Id)
+                );";
             using (var command = new NpgsqlCommand(createTradesTable, connection))
             {
                 command.ExecuteNonQuery();
@@ -145,17 +144,16 @@ namespace SemesterProjekt1
         private void InitializeSqliteDatabase(SqliteConnection connection)
         {
             string createUsersTable = @"
-                    CREATE TABLE IF NOT EXISTS Users (
-                        Id INTEGER PRIMARY KEY,
-                        Username TEXT NOT NULL,
-                        Password TEXT NOT NULL,
-                        Money INTEGER,
-                        ELO INTEGER,
-                        Bio TEXT,
-                        Image TEXT,
-                        Name TEXT
-);";
-
+                CREATE TABLE IF NOT EXISTS Users (
+                    Id INTEGER PRIMARY KEY,
+                    Username TEXT NOT NULL,
+                    Password TEXT NOT NULL,
+                    Money INTEGER,
+                    ELO INTEGER,
+                    Bio TEXT,
+                    Image TEXT,
+                    Name TEXT
+                );";
             using (var command = new SqliteCommand(createUsersTable, connection))
             {
                 command.ExecuteNonQuery();
@@ -180,27 +178,28 @@ namespace SemesterProjekt1
             }
 
             string createCardPacksTable = @"
-                    CREATE TABLE IF NOT EXISTS CardPacks (
-                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        UserID INTEGER NOT NULL,
-                        Rarity INTEGER NOT NULL,
-                        Cards TEXT,
-                        FOREIGN KEY(UserID) REFERENCES Users(Id)
-                    );";
+                CREATE TABLE IF NOT EXISTS CardPacks (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    UserID INTEGER NOT NULL,
+                    Rarity INTEGER NOT NULL,
+                    Cards TEXT,
+                    FOREIGN KEY(UserID) REFERENCES Users(Id)
+                );";
             using (var command = new SqliteCommand(createCardPacksTable, connection))
             {
                 command.ExecuteNonQuery();
             }
+
             string createTradesTable = @"
-        CREATE TABLE IF NOT EXISTS Trades (
-            Id UUID PRIMARY KEY,
-            CardToTrade INTEGER NOT NULL,
-            Type INTEGER NOT NULL,
-            MinimumDamage INTEGER NOT NULL,
-            UserId INTEGER NOT NULL,
-            FOREIGN KEY(UserId) REFERENCES Users(Id),
-            FOREIGN KEY(CardToTrade) REFERENCES Cards(Id)
-        );";
+                CREATE TABLE IF NOT EXISTS Trades (
+                    Id UUID PRIMARY KEY,
+                    CardToTrade UUID NOT NULL,
+                    Type INTEGER NOT NULL,
+                    MinimumDamage INTEGER NOT NULL,
+                    UserId INTEGER NOT NULL,
+                    FOREIGN KEY(UserId) REFERENCES Users(Id),
+                    FOREIGN KEY(CardToTrade) REFERENCES Cards(Id)
+                );";
             using (var command = new SqliteCommand(createTradesTable, connection))
             {
                 command.ExecuteNonQuery();
@@ -399,9 +398,9 @@ namespace SemesterProjekt1
                 if (CardExists(card.ID, connection, transaction))
                 {
                     string updateCard = @"
-            UPDATE Cards
-            SET Name = @Name, Damage = @Damage, Element = @Element, Type = @Type, RarityType = @RarityType, InDeck = @InDeck, InTrade = @InTrade, UserID = @UserID
-            WHERE Id = @Id;";
+                    UPDATE Cards
+                    SET Name = @Name, Damage = @Damage, Element = @Element, Type = @Type, RarityType = @RarityType, InDeck = @InDeck, InTrade = @InTrade, UserID = @UserID
+                    WHERE Id = @Id;";
                     using (var command = new SqliteCommand(updateCard, connection, transaction))
                     {
                         command.Parameters.AddWithValue("@Id", card.ID);
@@ -425,8 +424,8 @@ namespace SemesterProjekt1
                     }
 
                     string insertCard = @"
-            INSERT INTO Cards (Id, Name, Damage, Element, Type, RarityType, InDeck, InTrade, UserID)
-            VALUES (@Id, @Name, @Damage, @Element, @Type, @RarityType, @InDeck, @InTrade, @UserID);";
+                    INSERT INTO Cards (Id, Name, Damage, Element, Type, RarityType, InDeck, InTrade, UserID)
+                    VALUES (@Id, @Name, @Damage, @Element, @Type, @RarityType, @InDeck, @InTrade, @UserID);";
                     using (var command = new SqliteCommand(insertCard, connection, transaction))
                     {
                         command.Parameters.AddWithValue("@Id", card.ID);
@@ -456,8 +455,8 @@ namespace SemesterProjekt1
             {
                 string cardsJson = System.Text.Json.JsonSerializer.Serialize(cardPack.Cards, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
                 string insertCardPack = @"
-            INSERT INTO CardPacks (UserID, Rarity, Cards)
-            VALUES (@UserID, @Rarity, @Cards);";
+                    INSERT INTO CardPacks (UserID, Rarity, Cards)
+                    VALUES (@UserID, @Rarity, @Cards);";
                 using (var command = new SqliteCommand(insertCardPack, connection, transaction))
                 {
                     command.Parameters.AddWithValue("@UserID", cardPack.UserID);
@@ -580,11 +579,11 @@ namespace SemesterProjekt1
                             int id = reader.GetInt32(0);
                             string username = reader.GetString(1);
                             string password = reader.GetString(2);
-                            string bio = reader.GetString(3);
-                            string image = reader.GetString(4);
-                            string name = reader.GetString(5);
+                            string bio = reader.GetString(5);
+                            string image = reader.GetString(6);
+                            string Name = reader.GetString(7);
                             var inventory = LoadInventory(id);
-                            users.Add(new User(id, username, password, inventory, bio, image, name));
+                            users.Add(new User(id, username, password, inventory, bio, image, Name));
                         }
                     }
                 }
@@ -603,12 +602,11 @@ namespace SemesterProjekt1
                             int id = reader.GetInt32(0);
                             string username = reader.GetString(1);
                             string password = reader.GetString(2);
-                            string bio = reader.GetString(3);
-                            string image = reader.GetString(4);
-
-                            string name = reader.GetString(5);
+                            string bio = reader.GetString(5);
+                            string image = reader.GetString(6);
+                            string Name = reader.GetString(7);
                             var inventory = LoadInventory(id);
-                            users.Add(new User(id, username, password, inventory, bio, image, name));
+                            users.Add(new User(id, username, password, inventory, bio, image, Name));
                         }
                     }
                 }
@@ -645,8 +643,9 @@ namespace SemesterProjekt1
                                 command.Parameters.AddWithValue("@Password", user.Password);
                                 command.Parameters.AddWithValue("@Money", user.Inventory.Money);
                                 command.Parameters.AddWithValue("@Elo", user.Inventory.ELO);
-                                command.Parameters.AddWithValue("@Bio", user.Bio);
-                                command.Parameters.AddWithValue("@Image", user.Image);
+                                command.Parameters.AddWithValue("@Bio", user.Bio ?? string.Empty);
+                                command.Parameters.AddWithValue("@Image", user.Image ?? string.Empty);
+                                command.Parameters.AddWithValue("@Name", user.Name ?? string.Empty);
                                 command.ExecuteNonQuery();
                             }
 
@@ -666,8 +665,8 @@ namespace SemesterProjekt1
                         foreach (var user in users)
                         {
                             string insertOrUpdateUser = @"
-                                    INSERT OR REPLACE INTO Users (Id, Username, Password, Money, Elo, Bio, Image)
-                                    VALUES (@Id, @Username, @Password, @Money, @Elo, @Bio, @Image);";
+                                    INSERT OR REPLACE INTO Users (Id, Username, Password, Money, Elo, Bio, Image, Name)
+                                    VALUES (@Id, @Username, @Password, @Money, @Elo, @Bio, @Image, @Name);";
                             using (var command = new SqliteCommand(insertOrUpdateUser, connection, transaction))
                             {
                                 command.Parameters.AddWithValue("@Id", user.Id);
@@ -745,8 +744,8 @@ namespace SemesterProjekt1
                             command.Parameters.AddWithValue("@Password", user.Password);
                             command.Parameters.AddWithValue("@Money", user.Inventory.Money);
                             command.Parameters.AddWithValue("@Elo", user.Inventory.ELO);
-                            command.Parameters.AddWithValue("@Bio", user.Bio);
-                            command.Parameters.AddWithValue("@Image", user.Image);
+                            command.Parameters.AddWithValue("@Bio", user.Bio ?? string.Empty);
+                            command.Parameters.AddWithValue("@Image", user.Image ?? string.Empty);
                             command.Parameters.AddWithValue("@Name", user.Name ?? string.Empty);
                             command.ExecuteNonQuery();
                         }
@@ -827,11 +826,11 @@ namespace SemesterProjekt1
                         {
                             connection.Open();
                             string insertTrade = @"
-                        INSERT INTO Trades (Id, CardToTrade, Type, MinimumDamage, UserId)
-                        VALUES (@Id, @CardToTrade, @Type, @MinimumDamage, @UserId);";
-                            using (var command = new NpgsqlCommand(insertTrade, connection))
+                            INSERT INTO Trades (Id, CardToTrade, Type, MinimumDamage, UserId)
+                            VALUES (@Id, @CardToTrade, @Type, @MinimumDamage, @UserId);";
+                            using (var command = new NpgsqlCommand(insertTrade, connection, transaction))
                             {
-                                command.Parameters.AddWithValue("@Id", trade.Id);
+                                command.Parameters.AddWithValue("@Id", (Guid)trade.Id);
                                 command.Parameters.AddWithValue("@CardToTrade", trade.CardToTrade);
                                 command.Parameters.AddWithValue("@Type", (int)trade.Type);
                                 command.Parameters.AddWithValue("@MinimumDamage", trade.MinimumDamage);
@@ -853,12 +852,12 @@ namespace SemesterProjekt1
                         foreach (var trade in trades)
                         {
                             string insertTrade = @"
-                          INSERT INTO Trades (Id, CardToTrade, Type, MinimumDamage, UserId)
-                           VALUES (@Id, @CardToTrade, @Type, @MinimumDamage, @UserId);";
-                            using (var command = new SqliteCommand(insertTrade, connection))
+                            INSERT INTO Trades (Id, CardToTrade, Type, MinimumDamage, UserId)
+                            VALUES (@Id, @CardToTrade, @Type, @MinimumDamage, @UserId);";
+                            using (var command = new SqliteCommand(insertTrade, connection, transaction))
                             {
-                                command.Parameters.AddWithValue("@Id", trade.Id.ToString());
-                                command.Parameters.AddWithValue("@CardToTrade", trade.CardToTrade);
+                                command.Parameters.AddWithValue("@Id", (Guid)trade.Id);
+                                command.Parameters.AddWithValue("@CardToTrade", (Guid)trade.CardToTrade);
                                 command.Parameters.AddWithValue("@Type", (int)trade.Type);
                                 command.Parameters.AddWithValue("@MinimumDamage", trade.MinimumDamage);
                                 command.Parameters.AddWithValue("@UserId", trade.UserId);
@@ -909,7 +908,7 @@ namespace SemesterProjekt1
                         while (reader.Read())
                         {
                             var trade = new TradingLogic(
-                                Guid.Parse(reader.GetString(0)),
+                                reader.GetGuid(0),
                                 Guid.Parse(reader.GetString(1)),
                                 (CardType)reader.GetInt32(2),
                                 reader.GetInt32(3),
