@@ -86,12 +86,9 @@ namespace SemesterProjekt1
                         Money INTEGER,
                         ELO INTEGER,
                         Bio TEXT,
-<<<<<<< HEAD
                         Image TEXT,
                         Name TEXT
-=======
-                        Image TEXT
->>>>>>> 2294446d5af047acbbeaeaf021f7e0e97165c055
+
                     );";
             using (var command = new NpgsqlCommand(createUsersTable, connection))
             {
@@ -157,7 +154,6 @@ namespace SemesterProjekt1
                         Bio TEXT,
                         Image TEXT,
                         Name TEXT
-
 );";
 
             using (var command = new SqliteCommand(createUsersTable, connection))
@@ -632,7 +628,6 @@ namespace SemesterProjekt1
                         foreach (var user in users)
                         {
                             string insertOrUpdateUser = @"
-<<<<<<< HEAD
                                     INSERT INTO Users (Id, Username, Password, Money, Elo, Bio, Image, Name)
                                     VALUES (@Id, @Username, @Password, @Money, @Elo, @Bio, @Image, @Name)
                                     ON CONFLICT (Id) DO UPDATE
@@ -641,7 +636,6 @@ namespace SemesterProjekt1
                                         Money = EXCLUDED.Money,
                                         Elo = EXCLUDED.Elo,
                                         Bio = EXCLUDED.Bio,
-
                                         Image = EXCLUDED.Image,
                                         Name = EXCLUDED.Name;";
                             using (var command = new NpgsqlCommand(insertOrUpdateUser, connection, transaction))
@@ -707,15 +701,12 @@ namespace SemesterProjekt1
                         string insertOrUpdateUser = @"
                                 INSERT INTO Users (Id, Username, Password, Money, Elo, Bio, Image, Name)
                                 VALUES (@Id, @Username, @Password, @Money, @Elo, @Bio, @Image, @Name)
-                                INSERT INTO Users (Id, Username, Password, Money, Elo, Bio, Image)
-                                VALUES (@Id, @Username, @Password, @Money, @Elo, @Bio, @Image)
                                 ON CONFLICT (Id) DO UPDATE
                                 SET Username = EXCLUDED.Username,
                                     Password = EXCLUDED.Password,
                                     Money = EXCLUDED.Money,
                                     Elo = EXCLUDED.Elo,
                                     Bio = EXCLUDED.Bio,
-
                                     Image = EXCLUDED.Image,
                                     Name = EXCLUDED.Name;";
 
