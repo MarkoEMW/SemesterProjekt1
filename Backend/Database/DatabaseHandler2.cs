@@ -446,7 +446,6 @@ namespace SemesterProjekt1
                 }
             }
 
-            // Delete existing CardPacks for the user
             string deleteCardPacks = "DELETE FROM CardPacks WHERE UserID = @UserID;";
             using (var command = new SqliteCommand(deleteCardPacks, connection, transaction))
             {
@@ -454,7 +453,6 @@ namespace SemesterProjekt1
                 command.ExecuteNonQuery();
             }
 
-            // Insert new CardPacks
             foreach (var cardPack in inventory.CardPacks)
             {
                 string cardsJson = System.Text.Json.JsonSerializer.Serialize(cardPack.Cards, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
@@ -503,11 +501,12 @@ namespace SemesterProjekt1
                     }
 
                     string insertCard = @"
-            INSERT INTO Cards (Name, Damage, Element, Type, RarityType, InDeck, InTrade, UserID)
-            VALUES (@Name, @Damage, @Element, @Type, @RarityType, @InDeck, @InTrade, @UserID)
+            INSERT INTO Cards (Id, Name, Damage, Element, Type, RarityType, InDeck, InTrade, UserID)
+            VALUES (@Id, @Name, @Damage, @Element, @Type, @RarityType, @InDeck, @InTrade, @UserID)
             RETURNING Id;";
                     using (var command = new NpgsqlCommand(insertCard, connection, transaction))
                     {
+                        command.Parameters.AddWithValue("@Id", card.ID);
                         command.Parameters.AddWithValue("@Name", card.Name);
                         command.Parameters.AddWithValue("@Damage", card.Damage);
                         command.Parameters.AddWithValue("@Element", (int)card.Element);
@@ -516,12 +515,11 @@ namespace SemesterProjekt1
                         command.Parameters.AddWithValue("@InDeck", card.InDeck);
                         command.Parameters.AddWithValue("@InTrade", card.InTrade);
                         command.Parameters.AddWithValue("@UserID", card.UserID);
-                        card.ID = (Guid)command.ExecuteScalar();
+                        command.ExecuteNonQuery();
                     }
                 }
             }
 
-            // Delete existing CardPacks for the user
             string deleteCardPacks = "DELETE FROM CardPacks WHERE UserID = @UserID;";
             using (var command = new NpgsqlCommand(deleteCardPacks, connection, transaction))
             {
@@ -529,7 +527,6 @@ namespace SemesterProjekt1
                 command.ExecuteNonQuery();
             }
 
-            // Insert new CardPacks
             foreach (var cardPack in inventory.CardPacks)
             {
                 string cardsJson = System.Text.Json.JsonSerializer.Serialize(cardPack.Cards, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
@@ -821,28 +818,43 @@ namespace SemesterProjekt1
         {
             if (_usePostgres)
             {
-                using (var connection = new NpgsqlConnection(_postgresConnectionString))
+                try
                 {
-                    connection.Open();
-                    using (var transaction = connection.BeginTransaction())
+                    using (var connection = new NpgsqlConnection(_postgresConnectionString))
                     {
-                        foreach (var trade in trades)
+                        connection.Open();
+                        using (var transaction = connection.BeginTransaction())
                         {
-                            string insertTrade = @"
-                    INSERT INTO Trades (Id, CardToTrade, Type, MinimumDamage, UserId)
-                    VALUES (@Id, @CardToTrade, @Type, @MinimumDamage, @UserId);";
-                            using (var command = new NpgsqlCommand(insertTrade, connection, transaction))
+                            string deleteAllTrades = "DELETE FROM Trades;";
+                            using (var deleteCommand = new NpgsqlCommand(deleteAllTrades, connection, transaction))
                             {
-                                command.Parameters.AddWithValue("@Id", trade.Id);
-                                command.Parameters.AddWithValue("@CardToTrade", trade.CardToTrade);
-                                command.Parameters.AddWithValue("@Type", (int)trade.Type);
-                                command.Parameters.AddWithValue("@MinimumDamage", trade.MinimumDamage);
-                                command.Parameters.AddWithValue("@UserId", trade.UserId);
-                                command.ExecuteNonQuery();
+                                deleteCommand.ExecuteNonQuery();
                             }
+
+                            foreach (var trade in trades)
+                            {
+                                string insertTrade = @"
+                                   INSERT INTO Trades (Id, CardToTrade, Type, MinimumDamage, UserId)
+                                   VALUES (@Id, @CardToTrade, @Type, @MinimumDamage, @UserId);";
+
+                                using (var command = new NpgsqlCommand(insertTrade, connection, transaction))
+                                {
+                                    command.Parameters.AddWithValue("@Id", trade.Id);
+                                    command.Parameters.AddWithValue("@CardToTrade", trade.CardToTrade);
+                                    command.Parameters.AddWithValue("@Type", (int)trade.Type);
+                                    command.Parameters.AddWithValue("@MinimumDamage", trade.MinimumDamage);
+                                    command.Parameters.AddWithValue("@UserId", trade.UserId);
+                                    command.ExecuteNonQuery();
+                                }
+                            }
+                            transaction.Commit();
                         }
-                        transaction.Commit();
                     }
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.WriteLine($"An error occurred: {ex.Message}");
+                    throw;
                 }
             }
             else
