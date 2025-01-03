@@ -117,8 +117,8 @@ namespace SemesterProjekt1
                     Id SERIAL PRIMARY KEY,
                     UserID INTEGER NOT NULL,
                     Rarity INTEGER NOT NULL,
-                    FOREIGN KEY(UserID) REFERENCES Users(Id),
-                    Cards JSONB
+                    Cards JSONB,
+                    FOREIGN KEY(UserID) REFERENCES Users(Id)
                 );";
             using (var command = new NpgsqlCommand(createCardPacksTable, connection))
             {
@@ -127,13 +127,15 @@ namespace SemesterProjekt1
 
             string createTradesTable = @"
                 CREATE TABLE IF NOT EXISTS Trades (
-                    Id UUID PRIMARY KEY,
+                    Counter SERIAL PRIMARY KEY,
+                    Id UUID NOT NULL,
                     CardToTrade UUID NOT NULL,
                     Type INTEGER NOT NULL,
                     MinimumDamage INTEGER NOT NULL,
                     UserId INTEGER NOT NULL,
-                    FOREIGN KEY(UserId) REFERENCES Users(Id),
-                    FOREIGN KEY(CardToTrade) REFERENCES Cards(Id)
+                    FOREIGN KEY(UserId) REFERENCES Users(Id) ON DELETE CASCADE,
+                    FOREIGN KEY(CardToTrade) REFERENCES Cards(Id) ON DELETE CASCADE,
+                    CONSTRAINT unique_trade UNIQUE (UserId, CardToTrade)
                 );";
             using (var command = new NpgsqlCommand(createTradesTable, connection))
             {
@@ -192,13 +194,15 @@ namespace SemesterProjekt1
 
             string createTradesTable = @"
                 CREATE TABLE IF NOT EXISTS Trades (
-                    Id UUID PRIMARY KEY,
+                    Counter INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Id UUID NOT NULL,
                     CardToTrade UUID NOT NULL,
                     Type INTEGER NOT NULL,
                     MinimumDamage INTEGER NOT NULL,
                     UserId INTEGER NOT NULL,
-                    FOREIGN KEY(UserId) REFERENCES Users(Id),
-                    FOREIGN KEY(CardToTrade) REFERENCES Cards(Id)
+                    FOREIGN KEY(UserId) REFERENCES Users(Id) ON DELETE CASCADE,
+                    FOREIGN KEY(CardToTrade) REFERENCES Cards(Id) ON DELETE CASCADE,
+                    CONSTRAINT unique_trade UNIQUE (UserId, CardToTrade)
                 );";
             using (var command = new SqliteCommand(createTradesTable, connection))
             {
@@ -824,13 +828,12 @@ namespace SemesterProjekt1
                     {
                         foreach (var trade in trades)
                         {
-                            connection.Open();
                             string insertTrade = @"
-                            INSERT INTO Trades (Id, CardToTrade, Type, MinimumDamage, UserId)
-                            VALUES (@Id, @CardToTrade, @Type, @MinimumDamage, @UserId);";
+                    INSERT INTO Trades (Id, CardToTrade, Type, MinimumDamage, UserId)
+                    VALUES (@Id, @CardToTrade, @Type, @MinimumDamage, @UserId);";
                             using (var command = new NpgsqlCommand(insertTrade, connection, transaction))
                             {
-                                command.Parameters.AddWithValue("@Id", (Guid)trade.Id);
+                                command.Parameters.AddWithValue("@Id", trade.Id);
                                 command.Parameters.AddWithValue("@CardToTrade", trade.CardToTrade);
                                 command.Parameters.AddWithValue("@Type", (int)trade.Type);
                                 command.Parameters.AddWithValue("@MinimumDamage", trade.MinimumDamage);
@@ -852,12 +855,12 @@ namespace SemesterProjekt1
                         foreach (var trade in trades)
                         {
                             string insertTrade = @"
-                            INSERT INTO Trades (Id, CardToTrade, Type, MinimumDamage, UserId)
-                            VALUES (@Id, @CardToTrade, @Type, @MinimumDamage, @UserId);";
+                    INSERT INTO Trades (Id, CardToTrade, Type, MinimumDamage, UserId)
+                    VALUES (@Id, @CardToTrade, @Type, @MinimumDamage, @UserId);";
                             using (var command = new SqliteCommand(insertTrade, connection, transaction))
                             {
-                                command.Parameters.AddWithValue("@Id", (Guid)trade.Id);
-                                command.Parameters.AddWithValue("@CardToTrade", (Guid)trade.CardToTrade);
+                                command.Parameters.AddWithValue("@Id", trade.Id);
+                                command.Parameters.AddWithValue("@CardToTrade", trade.CardToTrade);
                                 command.Parameters.AddWithValue("@Type", (int)trade.Type);
                                 command.Parameters.AddWithValue("@MinimumDamage", trade.MinimumDamage);
                                 command.Parameters.AddWithValue("@UserId", trade.UserId);
@@ -885,11 +888,11 @@ namespace SemesterProjekt1
                         while (reader.Read())
                         {
                             var trade = new TradingLogic(
-                                reader.GetGuid(0),
-                                Guid.Parse(reader.GetString(1)),
-                                (CardType)reader.GetInt32(2),
-                                reader.GetInt32(3),
-                                reader.GetInt32(4)
+                                reader.GetGuid(1),
+                                reader.GetGuid(2),
+                                (CardType)reader.GetInt32(3),
+                                reader.GetInt32(4),
+                                reader.GetInt32(5)
                             );
                             trades.Add(trade);
                         }
@@ -908,11 +911,11 @@ namespace SemesterProjekt1
                         while (reader.Read())
                         {
                             var trade = new TradingLogic(
-                                reader.GetGuid(0),
-                                Guid.Parse(reader.GetString(1)),
-                                (CardType)reader.GetInt32(2),
-                                reader.GetInt32(3),
-                                reader.GetInt32(4)
+                                reader.GetGuid(1),
+                                reader.GetGuid(2),
+                                (CardType)reader.GetInt32(3),
+                                reader.GetInt32(4),
+                                reader.GetInt32(5)
                             );
                             trades.Add(trade);
                         }
