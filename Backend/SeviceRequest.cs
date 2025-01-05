@@ -355,6 +355,7 @@ namespace SemesterProjekt1
                             Console.WriteLine(user1.Username);
                             Console.WriteLine(user2.Username);
 
+<<<<<<< HEAD
                             var fightLogic = new FightLogic(user1, user2);
                             var battleResult = fightLogic.StartBattleAsync();
 
@@ -362,6 +363,19 @@ namespace SemesterProjekt1
 
                             string jsonResponse = SerializeToJson(battleResult);
 
+=======
+                            // Perform battle logic
+                            var fightLogic = new FightLogic(user1, user2);
+                            var battleResult = fightLogic.StartBattleAsync();
+
+                            // Update user ELO
+                            UpdateELO(fightLogic, user1, user2);
+
+                            // Serialize response
+                            string jsonResponse = SerializeToJson(battleResult);
+
+                            // Complete tasks
+>>>>>>> 3c9dbadf7840ce8df0ccb6407684b8596439e870
                             CompleteBattleResponse(user1.Id, jsonResponse);
                             CompleteBattleResponse(user2.Id, jsonResponse);
                         }
